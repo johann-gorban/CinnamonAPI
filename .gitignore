@@ -1,0 +1,9 @@
+
+*
+
+!database
+!database/*.py
+database/*.db
+
+!classes.py
+!main.py
