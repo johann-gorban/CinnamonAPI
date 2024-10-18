@@ -247,47 +247,29 @@ def get_available_products():
             result = JSONDefaultResponse(data=[], error=True, details=f'Database error: {error.args[0]}')
             return result.json()
 
-def get_product_info(product_id: str):
+def get_photos(product_id: str):
     sql_query = '''
-        SELECT id, name, price, quantity, photo_1, photo_2, photo_3
+        SELECT photo_1, photo_2, photo_3
         FROM Products
         WHERE id = ?
     '''
 
     with sqlite3.connect(DATABASE_PATH) as connection:
+
         try:
             cursor = connection.cursor()
-            cursor.execute(sql_query, (product_id, ))
+            cursor.execute(sql_query, (product_id,))
+            photos = cursor.fetchone()
 
-            result = cursor.fetchone()
+            result = []
+            for photo in photos:
+                if photo is not None:
+                    photo = base64.b64encode(photo).decode('utf-8')
+                result.append(photo)
 
-            photo_1 = result[4]
-            photo_2 = result[5]
-            photo_3 = result[6]
-
-            if photo_1 is not None:
-                photo_1 = base64.b64encode(photo_1).decode('utf-8')
-            if photo_2 is not None:
-                photo_2 = base64.b64encode(photo_2).decode('utf-8')
-            if photo_3 is not None:
-                photo_3 = base64.b64encode(photo_3).decode('utf-8')
-
-            product = {
-                'id': result[0],
-                'name': result[1],
-                'price': result[2],
-                'quantity:': result[3],
-                'photo_1': photo_1,
-                'photo_2': photo_2,
-                'photo_3': photo_3
-            }
-
-            result = JSONDefaultResponse(data=[product], error=False, details='Successfully executed')
-            return result.json()
+            return result
         except Exception as error:
-            result = JSONDefaultResponse(data=[], error=True, details=f'Database error: {error.args[0]}')
-
-            return result.json()
+            return None
 
 
 # Supply function
