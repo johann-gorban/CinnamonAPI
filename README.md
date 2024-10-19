@@ -1,7 +1,7 @@
 # HTTP Requests docs
 
-##classes Classes
-
+## Classes
+## classes
 
 
 ## GET-Requests
