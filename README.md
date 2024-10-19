@@ -22,8 +22,8 @@ class Customer(BaseModel):
 ```
 ```
 class Admin(BaseModel):
-    id: str
-    password: str
+    id:         str
+    password:   str
 ```
 ```
 class Product(BaseModel):
