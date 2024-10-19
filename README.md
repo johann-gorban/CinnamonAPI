@@ -1,4 +1,4 @@
-HTTP Requests docs
+# HTTP Requests docs
 
 ## GET-Requests
 
@@ -7,3 +7,12 @@ HTTP Requests docs
 ### /produts/{id}
 
 ### /product/{id}/photo_x
+
+## POST-Requests
+
+### /admin-panel/login
+
+### /admin-panel/supply
+
+### /sale
+
