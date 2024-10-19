@@ -3,6 +3,8 @@
 ## Navigation
 
 - [API classes](#classes)
+- [GET requests](#get-requests)
+- [POST requests](#post-requests)
 
 ## Classes
 
