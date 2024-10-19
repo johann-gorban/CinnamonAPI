@@ -1,7 +1,10 @@
 # HTTP Requests docs
 
+## Navigation
+
+- [API classes](#classes)
+
 ## Classes
-## classes
 
 
 ## GET-Requests
