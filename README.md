@@ -25,6 +25,9 @@ class Admin(BaseModel):
     id:         str
     password:   str
 ```
+
+Product class stores default information about product.
+Photos dictionary will store up to 3 photos into database
 ```
 class Product(BaseModel):
     id:         str
