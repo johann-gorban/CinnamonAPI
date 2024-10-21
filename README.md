@@ -76,7 +76,6 @@ Authenticates an admin and creates a session.
 
 Params:
 - admin:     Object of the Admin class containing id and password
-- response:  ???
 
 Reponse:
 - JSONDefaultReponse: Indicates success or failure
@@ -89,7 +88,7 @@ Supplies a new product to the inventory.
 
 Params: 
 - product: Object of the Product class, excluding id (generated automatically)
-- 
+  
 Reponse:
 - JSONDefaultResponse: Contains the result of the operation
 
