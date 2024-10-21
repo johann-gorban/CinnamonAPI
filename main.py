@@ -17,7 +17,6 @@ app.add_middleware(
 )
 
 
-
 # GET Requests processing
 
 @app.get('/products')
