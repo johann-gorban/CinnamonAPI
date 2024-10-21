@@ -103,6 +103,6 @@ Processes a sale for a customer.
 Params:
 - product: Object of the Product class, excluding photos and name
 - customer: Object of the Customer class containing customer details
-- 
+
 Response:
 - JSONDefaultReponse: contains the result of the operation
