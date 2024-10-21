@@ -73,18 +73,23 @@ Note:
 
 ### /admin-panel/login
 Authenticates an admin and creates a session.
+
 Params:
 - admin:     Object of the Admin class containing id and password
 - response:  ???
+
 Reponse:
 - JSONDefaultReponse: Indicates success or failure
+
 Behavior:
 - If the credentials are valid, a session cookie is set (expires in 20 minutes)
 
 ### /admin-panel/supply
 Supplies a new product to the inventory.
+
 Params: 
 - product: Object of the Product class, excluding id (generated automatically)
+- 
 Reponse:
 - JSONDefaultResponse: Contains the result of the operation
 
@@ -94,8 +99,10 @@ Notes:
 
 ### /sale
 Processes a sale for a customer.
+
 Params:
 - product: Object of the Product class, excluding photos and name
 - customer: Object of the Customer class containing customer details
+- 
 Response:
 - JSONDefaultReponse: contains the result of the operation
