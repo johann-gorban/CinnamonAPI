@@ -46,51 +46,58 @@ class Product(BaseModel):
 
 ### /products
 Retrieves a list of all products.
+
 Response:
-    * JSONDefaultResponse: contains a list of products (id, name, quantity, price)
+
+    - JSONDefaultResponse: contains a list of products (id, name, quantity, price)
 
 ### /produts/{id}
 Caches product photos.
+
 Response:
-    * JSONDefaultResponse: empty response with error status (True of False)
+
+    - JSONDefaultResponse: empty response with error status (True of False)
 
 ### /product/{id}/photo_x
-Retrieves a specific photo of the product by its index (x) .
+Retrieves a specific photo of the product by its index (x).
+
 Params:
-    * id: Product ID (string)
-    * x:  Photo number (1, 2 or 3)
+* id: Product ID (string)
+* x:  Photo number (1, 2 or 3)
+
 Reponse:
-    * Base64-encoded JPG image
+- Base64-encoded JPG image
+
 Note:
-To display image, decode the base64 string 
+- To display image, decode the base64 string 
 
 ## POST-Requests
 
 ### /admin-panel/login
 Authenticates an admin and creates a session.
 Params:
-    * admin:     Object of the Admin class containing id and password
-    * response:  ???
+- admin:     Object of the Admin class containing id and password
+- response:  ???
 Reponse:
-    * JSONDefaultReponse: Indicates success or failure
+- JSONDefaultReponse: Indicates success or failure
 Behavior:
-    * If the credentials are valid, a session cookie is set (expires in 20 minutes)
+- If the credentials are valid, a session cookie is set (expires in 20 minutes)
 
 ### /admin-panel/supply
 Supplies a new product to the inventory.
 Params: 
-    * product: Object of the Product class, excluding id (generated automatically)
+- product: Object of the Product class, excluding id (generated automatically)
 Reponse:
-    * JSONDefaultResponse: Contains the result of the operation
+- JSONDefaultResponse: Contains the result of the operation
 
 Notes:
-    * Product information must include name, quantity, price, and up to 3 base64-encoded photos;
-    * Admin must have a valid session cookie to perform this action
+- Product information must include name, quantity, price, and up to 3 base64-encoded photos;
+- Admin must have a valid session cookie to perform this action
 
 ### /sale
 Processes a sale for a customer.
 Params:
-    * product: Object of the Product class, excluding photos and name
-    * customer: Object of the Customer class containing customer details
+- product: Object of the Product class, excluding photos and name
+- customer: Object of the Customer class containing customer details
 Response:
-    * JSONDefaultReponse: contains the result of the operation
+- JSONDefaultReponse: contains the result of the operation
