@@ -48,15 +48,13 @@ class Product(BaseModel):
 Retrieves a list of all products.
 
 Response:
-
-    - JSONDefaultResponse: contains a list of products (id, name, quantity, price)
+- JSONDefaultResponse: contains a list of products (id, name, quantity, price)
 
 ### /produts/{id}
 Caches product photos.
 
 Response:
-
-    - JSONDefaultResponse: empty response with error status (True of False)
+- JSONDefaultResponse: empty response with error status (True of False)
 
 ### /product/{id}/photo_x
 Retrieves a specific photo of the product by its index (x).
