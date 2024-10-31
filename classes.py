@@ -22,19 +22,6 @@ class Customer(BaseModel):
     city:       str
     address:    str
 
-# Interface class for supply and sale classes
-class Operation(BaseModel):
-    id:         str
-    product:    Product
-
-# Supply operation class
-class Supply(Operation):
-    admin: Admin
-
-# Sale operation class
-class Sale(Operation):
-    customer: Customer
-
 
 class JSONDefaultResponse:
     data:       List
