@@ -23,14 +23,15 @@ app.add_middleware(
 async def get_catalog():
     """
 
-    :return: list with ids, names, quantities and price of all available products
+    :return: JSONDefaultResponse
 
+    Returns list with ids, names, quantities and price of all available products
     In case of errors the function returns 500-error with details
 
     """
     try:
         response = get_available_products()
-        return JSONResponse(response)
+        return response
     except Exception as error:
         raise HTTPException(status_code=500, detail=f"Unexpected error: {error}")
 
@@ -39,7 +40,7 @@ async def get_catalog():
 product_photos_cache: dict = {}
 
 @app.get('/products/{id}')
-async def get_product_photos(id: str):
+async def cache_product_photos(id: str):
     """
 
     :param id:  product's unique ID
@@ -60,7 +61,11 @@ async def get_product_photos(id: str):
             'photo_3': photos[2] if len(photos) > 2 else None
         }
 
-        return {'message': 'Photos cached successfully!'}
+        return JSONDefaultResponse(
+            data=[],
+            error=False,
+            details='Photos cached successfully'
+        ).json()
     except IndexError:
         raise HTTPException(status_code=404, detail="Not enough photos available")
     except Exception as error:
@@ -143,8 +148,10 @@ async def login(admin: Admin, response: Response):
 
     """
     if not check_admin_password(admin):
-        result = JSONDefaultResponse(data=[], error=True, details='Incorrect login or password')
-        return JSONResponse(result.json())
+        return JSONDefaultResponse(data=[],
+                                   error=True,
+                                   details='Incorrect login or password'
+                                   ).json()
 
     else:
         session_token = str(uuid.uuid4())[:8] # generate new token
@@ -152,11 +159,11 @@ async def login(admin: Admin, response: Response):
 
         response.set_cookie(key='session_token', value=session_token, httponly=True, secure=True, expires=1200)
 
-        result = JSONDefaultResponse(data=[{
+        return JSONDefaultResponse(data=[{
             'token': session_token
-        }], error=False, details='Successfully authorized')
-
-        return JSONResponse(result.json())
+        }], error=False,
+            details='Successfully authorized'
+        ).json()
 
 @app.post('/admin-panel/supply')
 async def supply(product: Product, session_token = Cookie()):

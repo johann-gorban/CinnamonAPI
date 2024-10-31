@@ -68,11 +68,10 @@ def check_admin_password(admin: Admin) -> bool:
 
     with sqlite3.connect(DATABASE_PATH) as connection:
         try:
-            cursor = connection.cursor()
-            cursor.execute(sql_query, (admin_id, admin_password))
-            result = bool(cursor.fetchone()[0])
+            with connection.execute(sql_query, (admin_id, admin_password)) as cursor:
+                result = bool(cursor.fetchone()[0])
+                return result
 
-            return result
         except Exception as error:
             raise Exception('Database error: failed to check admin')
 
@@ -86,12 +85,10 @@ def get_actual_quantity(connection: sqlite3.Connection, product: Product):
 
     product_id = product.id
 
-    cursor = connection.cursor()
-    cursor.execute(sql_query, (product_id, ))
-
     try:
-        actual_quantity = int(cursor.fetchone()[0])
-        return actual_quantity
+        with connection.execute(sql_query, (product_id, )) as cursor:
+            actual_quantity = int(cursor.fetchone()[0])
+            return actual_quantity
     except Exception as error:
         raise Exception(f'No products with ID {product_id}')
 
@@ -120,8 +117,7 @@ def update_quantity(connection: sqlite3.Connection, product: Product):
         raise Exception(f'You are trying to buy too much products with ID {product_id}')
 
     try:
-        cursor = connection.cursor()
-        cursor.execute(sql_query, (product_quantity, product_id))
+        connection.execute(sql_query, (product_quantity, product_id))
         connection.commit()
     except Exception:
         raise Exception('Database error: failed to update product info')
@@ -147,8 +143,7 @@ def insert_customer(connection: sqlite3.Connection, customer: Customer):
     customer_name   = customer.name
 
     try:
-        cursor = connection.cursor()
-        cursor.execute(sql_query, (customer_email, customer_name))
+        connection.execute(sql_query, (customer_email, customer_name))
         connection.commit()
 
     except Exception:
@@ -189,8 +184,7 @@ def insert_product(connection: sqlite3.Connection, product: Product):
         photo_3 = base64.b64decode(photo_3)
 
     try:
-        cursor = connection.cursor()
-        cursor.execute(sql_query, (product_id, product_name,
+        connection.execute(sql_query, (product_id, product_name,
                                    product_price, product_quantity,
                                    photo_1, photo_2, photo_3))
         connection.commit()
@@ -224,8 +218,7 @@ def insert_supply_operation(connection: sqlite3.Connection, product: Product, ad
     supply_date         = str(datetime.datetime.today())[:10]
 
     try:
-        cursor = connection.cursor()
-        cursor.execute(sql_query, (supply_id, supply_product_id,
+        connection.execute(sql_query, (supply_id, supply_product_id,
                                    supply_admin_id, supply_quantity,
                                    supply_price, supply_date))
         connection.commit()
@@ -263,8 +256,7 @@ def insert_sale_operation(connection: sqlite3.Connection, product: Product, cust
     sale_date       = str(datetime.datetime.today())[:10]
 
     try:
-        cursor = connection.cursor()
-        cursor.execute(sql_query, (sale_id, sale_product_id,
+        connection.execute(sql_query, (sale_id, sale_product_id,
                                    sale_quantity, sale_price,
                                    sale_user_email, sale_city,
                                    sale_address, sale_date))
@@ -292,24 +284,22 @@ def get_available_products():
 
     with sqlite3.connect(DATABASE_PATH) as connection:
         try:
-            cursor = connection.cursor()
-            cursor.execute(sql_query)
+            with connection.execute(sql_query) as cursor:
+                products = cursor.fetchall()
 
-            products = cursor.fetchall()
+                result = JSONDefaultResponse()
+                for product in products:
+                    result.data.append({
+                        'id':           product[0],
+                        'name':         product[1],
+                        'price':        product[2],
+                        'quantity':     product[3]
+                    })
 
-            result = JSONDefaultResponse()
-            for product in products:
-                result.data.append({
-                    'id':           product[0],
-                    'name':         product[1],
-                    'price':        product[2],
-                    'quantity':     product[3]
-                })
+                result.error = False
+                result.details = 'Executed successfully'
 
-            result.error = False
-            result.details = 'Executed successfully'
-
-            return result.json()
+                return result.json()
         except Exception as error:
             result = JSONDefaultResponse(data=[], error=True, details=f'Database error: {error.args[0]}')
             return result.json()
@@ -332,17 +322,16 @@ def get_photos(product_id: str):
     with sqlite3.connect(DATABASE_PATH) as connection:
 
         try:
-            cursor = connection.cursor()
-            cursor.execute(sql_query, (product_id,))
-            photos = cursor.fetchone()
+            with connection.execute(sql_query, (product_id,)) as cursor:
+                photos = cursor.fetchone()
 
-            result = []
-            for photo in photos:
-                if photo is not None:
-                    photo = base64.b64encode(photo).decode('utf-8')
-                result.append(photo)
+                result = []
+                for photo in photos:
+                    if photo is not None:
+                        photo = base64.b64encode(photo).decode('utf-8')
+                    result.append(photo)
 
-            return result
+                return result
         except Exception as error:
             raise Exception('Database error: failed to get images')
 
@@ -375,7 +364,7 @@ def supply_product(product: Product, admin: Admin):
                 insert_supply_operation(connection, product, admin)
 
             return JSONDefaultResponse(
-                data={'product_id': product.id},
+                data=[],
                 error=False,
                 details=f'Product {product.id} successfully added'
             ).json()

@@ -7,3 +7,4 @@ database/*.db
 
 !classes.py
 !main.py
+!config.py
