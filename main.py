@@ -193,7 +193,7 @@ async def get_text_data(data: Product):
 
         return JSONDefaultResponse(error=False,
                                    details='OK').json()
-    except Exception() as error:
+    except Exception as error:
         return JSONDefaultResponse(error=True,
                                    details=str(error)).json()
 
@@ -208,7 +208,7 @@ async def get_text_data(photo_1: str, photo_2: str = None, photo_3: str = None):
 
         return JSONDefaultResponse(error=False,
                                    details='OK').json()
-    except Exception() as error:
+    except Exception as error:
         return JSONDefaultResponse(error=True,
                                    details=str(error)).json()
 

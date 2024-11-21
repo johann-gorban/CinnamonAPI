@@ -10,19 +10,6 @@ class Product(BaseModel):
     price:      int
     photos:     Dict[str, str]
 
-    def __init__(self,
-                 id: int = None,
-                 name:str = None,
-                 quantity: int = None,
-                 price: int = None,
-                 photos: Dict[str, str] = None):
-
-        self.id = id
-        self.name = name
-        self.quantity = quantity
-        self.price = price
-        self.photos = photos
-
 # Admin class
 class Admin(BaseModel):
     id: str
