@@ -7,7 +7,7 @@ from classes import Admin, Customer, Product, JSONDefaultResponse
 from config import DATABASE_PATH
 
 
-def generate_id(connection: sqlite3.Connection):
+def _generate_id(connection: sqlite3.Connection):
     """
     :param connection:  SQLite3 connection with database
     :return:            unique ID
@@ -76,7 +76,7 @@ def check_admin_password(admin: Admin) -> bool:
         except Exception as error:
             raise Exception('Database error: failed to check admin')
 
-def get_actual_quantity(connection: sqlite3.Connection, product: Product):
+def _get_actual_quantity(connection: sqlite3.Connection, product: Product):
 
     sql_query = '''
         SELECT quantity
@@ -97,7 +97,7 @@ def get_actual_quantity(connection: sqlite3.Connection, product: Product):
 
 
 
-def update_quantity(connection: sqlite3.Connection, product: Product):
+def _update_quantity(connection: sqlite3.Connection, product: Product):
     """
     :param connection:  SQLite3 connection with database
     :param product:     product data
@@ -116,7 +116,7 @@ def update_quantity(connection: sqlite3.Connection, product: Product):
     product_quantity = product.quantity if product.quantity > 0 else 0
     product_id       = product.id
 
-    if product_quantity > get_actual_quantity(connection, product):
+    if product_quantity > _get_actual_quantity(connection, product):
         raise Exception(f'You are trying to buy too much products with ID {product_id}')
 
     try:
@@ -126,7 +126,7 @@ def update_quantity(connection: sqlite3.Connection, product: Product):
     except Exception:
         raise Exception('Database error: failed to update product info')
 
-def insert_customer(connection: sqlite3.Connection, customer: Customer):
+def _insert_customer(connection: sqlite3.Connection, customer: Customer):
     """
     :param connection:      SQLite3 connection with database
     :param customer:        customer data (email and name)
@@ -154,7 +154,7 @@ def insert_customer(connection: sqlite3.Connection, customer: Customer):
     except Exception:
         raise Exception('Database error: place customer error')
 
-def insert_product(connection: sqlite3.Connection, product: Product):
+def _insert_product(connection: sqlite3.Connection, product: Product):
     """
     :param connection:      SQLite3 connection with database
     :param product:         product data
@@ -198,7 +198,7 @@ def insert_product(connection: sqlite3.Connection, product: Product):
     except Exception:
         raise Exception('Database error: place product error')
 
-def insert_supply_operation(connection: sqlite3.Connection, product: Product, admin: Admin):
+def _insert_supply_operation(connection: sqlite3.Connection, product: Product, admin: Admin):
     """
     :param connection:  SQLite3 connection with database
     :param product:     product data
@@ -216,7 +216,7 @@ def insert_supply_operation(connection: sqlite3.Connection, product: Product, ad
         VALUES (?, ?, ?, ?, ?, ?)
     '''
 
-    supply_id           = 'SP' + generate_id(connection)
+    supply_id           = 'SP' + _generate_id(connection)
     supply_product_id   = product.id
     supply_admin_id     = admin.id
     supply_quantity     = product.quantity
@@ -235,7 +235,7 @@ def insert_supply_operation(connection: sqlite3.Connection, product: Product, ad
 
     # connection.commit()
 
-def insert_sale_operation(connection: sqlite3.Connection, product: Product, customer: Customer):
+def _insert_sale_operation(connection: sqlite3.Connection, product: Product, customer: Customer):
     """
     :param connection:  SQLite3 connection with database
     :param product:     product data
@@ -253,7 +253,7 @@ def insert_sale_operation(connection: sqlite3.Connection, product: Product, cust
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     '''
 
-    sale_id         = 'SL' + generate_id(connection)
+    sale_id         = 'SL' + _generate_id(connection)
     sale_product_id = product.id
     sale_quantity   = product.quantity
     sale_price      = product.price
@@ -368,11 +368,11 @@ def supply_product(product: Product, admin: Admin):
                     details='Not authorized'
                 ).json()
 
-            product.id = 'PR' + generate_id(connection)
+            product.id = 'PR' + _generate_id(connection)
 
             with connection:
-                insert_product(connection, product)
-                insert_supply_operation(connection, product, admin)
+                _insert_product(connection, product)
+                _insert_supply_operation(connection, product, admin)
 
             return JSONDefaultResponse(
                 data={'product_id': product.id},
@@ -414,9 +414,9 @@ def sale_product(product: Product, customer: Customer):
         try:
             # Use a transaction to ensure atomicity of operations
             with connection:
-                update_quantity(connection, product)  # Update product quantity
-                insert_customer(connection, customer)  # Insert customer if not already tracked
-                insert_sale_operation(connection, product, customer)  # Insert sale operation
+                _update_quantity(connection, product)  # Update product quantity
+                _insert_customer(connection, customer)  # Insert customer if not already tracked
+                _insert_sale_operation(connection, product, customer)  # Insert sale operation
 
             # Successful response with product and customer details
             return JSONDefaultResponse(

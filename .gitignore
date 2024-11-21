@@ -1,4 +1,3 @@
-
 *
 
 !database
@@ -9,3 +8,4 @@ database/*.db
 !main.py
 !config.py
 !README.md
+!requirements.txt

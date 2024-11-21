@@ -1,3 +1,5 @@
+from itertools import product
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, Response
 from fastapi import Cookie
@@ -159,10 +161,11 @@ async def login(admin: Admin, response: Response):
 
         return JSONResponse(result.json())
 
+product = {}
+
 @app.post('/admin-panel/supply')
-async def supply(product: Product, session_token = Cookie()):
+async def supply(session_token = Cookie()):
     """
-    :param product:             product data
     :param session_token:       Cookie session token
     :return:                    JSONDefaultResponse
 
@@ -173,17 +176,46 @@ async def supply(product: Product, session_token = Cookie()):
 
     """
     admin = admin_sessions.get(session_token)
-    if admin:
+    if admin and bool(product):
         result = supply_product(product, admin)
         return result
     else:
         result = JSONDefaultResponse(data=[], error=True, details='Not authorized')
         return result.json()
 
+
+@app.post('/admin-panel/transfer_text')
+async def get_text_data(data: Product):
+    try:
+        product['name']     = data.name
+        product['quantity'] = data.quantity
+        product['price']    = data.price
+
+        return JSONDefaultResponse(error=False,
+                                   details='OK').json()
+    except Exception() as error:
+        return JSONDefaultResponse(error=True,
+                                   details=str(error)).json()
+
+@app.post('/admin-panel/transfer_photos')
+async def get_text_data(photo_1: str, photo_2: str = None, photo_3: str = None):
+    try:
+        product['photos'] = {
+            'photo_1': photo_1,
+            'photo_2': photo_2,
+            'photo_3': photo_3
+        }
+
+        return JSONDefaultResponse(error=False,
+                                   details='OK').json()
+    except Exception() as error:
+        return JSONDefaultResponse(error=True,
+                                   details=str(error)).json()
+
 @app.post('/sale')
-async def sale(product: Product, customer: Customer):
+async def sale(data: Product, customer: Customer):
     """
-    :param product:     product data
+    :param data:        product data
     :param customer:    customer data
     :return:            JSONDefaultResponse
 
@@ -193,5 +225,5 @@ async def sale(product: Product, customer: Customer):
     In case of problems it will return JSONDefaultResponse with errors
 
     """
-    result = sale_product(product, customer)
+    result = sale_product(data, customer)
     return JSONResponse(result)
