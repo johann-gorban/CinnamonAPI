@@ -2,11 +2,17 @@
 Current version: dev v2.5
 
 ## Navigation
-
+- [How to...](#how-to)
 - [API classes](#classes)
 - [GET requests](#get-requests) 
 - [POST requests](#post-requests)
+## How-to
+### How to supply product
+1. Give text data with /transfer_text (name, quantity, price)
+2. Give photos with /transfer_photos (photo_1, photo_2, photo_3)
+3. Confirm supply with /supply
 
+Notice: admin should be logged into to supply a product
 ## Classes
 ### JSONDefaultReponse
 Represents the standard structure for all responses.
@@ -83,18 +89,36 @@ Reponse:
 
 Behavior:
 - If the credentials are valid, a session cookie is set (expires in 20 minutes)
+### /admin-panel/transfer_text
+Transfer given data to the server
+
+Params:
+- Product: Should contain name, price, quantity
+
+Response:
+- JSONDefaultResponse: Contains the result of the operation
+### /admin-panel/transfer_photos
+Transfer given data to the server
+
+Params:
+- photo_1 (str): base64 encoded UTF-8 string. Can't be None
+- photo_2 (str): base64 encoded UTF-8 string
+- photo_3 (str): base64 encoded UTF-8 string
+
+Response:
+- JSONDefaultResponse: Contains the result of the operation
+
+Note:
+- The request should be done **after /transfer_text**
 
 ### /admin-panel/supply
 Supplies a new product to the inventory.
-
-Params: 
-- product: Object of the Product class, excluding id (generated automatically)
   
-Reponse:
+Response:
 - JSONDefaultResponse: Contains the result of the operation
 
 Notes:
-- Product information must include name, quantity, price, and up to 3 base64-encoded photos;
+- The request should be done **after /transfer_text and /transfer_photos**
 - Admin must have a valid session cookie to perform this action
 
 ### /sale
