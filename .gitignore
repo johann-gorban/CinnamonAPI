@@ -19,6 +19,7 @@
 
 /media/images/*
 /media/cinnamon.db
+!/media/
 
 test.py
 test_image_1.jpg
