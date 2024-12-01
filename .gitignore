@@ -18,6 +18,7 @@
 #database/__pychache__/
 
 /media/images/*.jpg
+!/media/images/test.jpg
 
 test.py
 test_image_1.jpg
